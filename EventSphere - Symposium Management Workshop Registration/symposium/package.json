@@ -1,0 +1,6 @@
+{
+  "name": "eventsphere-prototype",
+  "version": "1.0.0",
+  "description": "Symposium Management & Workshop Registration System - clickable prototype",
+  "scripts": { "start": "npx serve . -l 5500" }
+}
