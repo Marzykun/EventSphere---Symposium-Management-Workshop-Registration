@@ -51,7 +51,7 @@ const empty=(i,t,m)=>`<div class="empty">${ic(i,30)}<h4>${t}</h4><p>${m||""}</p>
 const TX=[["","Normal"],["lg","Large"],["xl","Extra large"]];let TI=0;
 try{TI=Math.max(0,Math.min(2,+localStorage.getItem("eventsphere_text")||0))}catch(e){}
 function applyText(){document.documentElement.dataset.text=TX[TI][0];try{localStorage.setItem("eventsphere_text",TI)}catch(e){}}
-function cycleText(){TI=(TI+1)%3;applyText();toast("Text size: "+TX[TI][1]);if(U)render()}
+function cycleText(){TI=(TI+1)%3;applyText();if(U)render()}
 
 /* ================= 2. data + storage ================= */
 const KEY="eventsphere_proto_v6",SESS="eventsphere_proto_session";
@@ -83,7 +83,7 @@ function seed(){
 }
 let S=(()=>{try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.users&&s.events&&s.fb&&s.reqs)return s}catch(e){}return seed()})();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-let U=null,role="student",signup=false,fp=0,RC=null,authOk="",AF={},authErr="",demoOpen=false,route="",ed=null,PI="",CM=0,SR=null,SEV="all",RS=0,LD=false,LT=0,
+let U=null,role="student",signup=false,fp=0,RC=null,authOk="",AF={},authErr="",demoOpen=false,route="",ed=null,PI="",CM=0,SR=null,SEV="all",RS=0,
   F={q:"",cat:"All",dept:"All",sort:"date",past:false,page:0},P={n:false,a:false},log=[],jwt="",AK=null;
 const api=(m,u,c=200)=>{log.unshift({m,u,c});log=log.slice(0,8)};
 const audit=act=>S.audit.unshift({t:stamp(),who:U?U.email:"anonymous",act}),
@@ -169,7 +169,7 @@ function enter(u,created){U=u;AF={};signup=false;fp=0;authErr="";authOk="";
   try{localStorage.setItem(SESS,u.email)}catch(e){}
   api("POST",created?"/api/auth/register":"/api/auth/login",created?201:200);audit(created?"Registered and signed in":"Signed in");
   route={student:"discover",organizer:"mine",admin:"approve"}[u.role];P={n:false,a:false};ed=null;
-  $("#auth").classList.add("hid");$("#app").classList.remove("hid");busy();toast(created?"Account created. Welcome, "+u.name.split(" ")[0]+"!":"Signed in")}
+  $("#auth").classList.add("hid");$("#app").classList.remove("hid");render()}
 function logout(){if(U)audit("Signed out");U=null;P={n:false,a:false};signup=false;fp=0;AF={};authErr="";authOk="";try{localStorage.removeItem(SESS)}catch(e){}persist();
   $("#app").classList.add("hid");$("#auth").classList.remove("hid");closeM();drawAuth()}
 
@@ -177,9 +177,7 @@ function logout(){if(U)audit("Signed out");U=null;P={n:false,a:false};signup=fal
 const NAVS={student:[["discover","Discover","compass"],["cal","Calendar","calendar"],["saved","Saved","heart"],["regs","My tickets","ticket"],["me","Profile","user"]],
   organizer:[["mine","My events","layers"],["form","Create event","plus"],["scan","Check-in desk","scan"],["cal","Calendar","calendar"],["me","Profile","user"]],
   admin:[["approve","Approvals","approve"],["all","All events","layers"],["cal","Calendar","calendar"],["users","Users","users"],["rep","Reports","chart"],["audit","Activity log","pulse"],["me","Profile","user"]]};
-function busy(){LD=true;render();clearTimeout(LT);LT=setTimeout(()=>{LD=false;render()},320)} // short skeleton while a page "loads"
-function go(r){route=r;P.n=false;if(r==="form")PI=(evOf(ed)||{}).img||"";$("#side").classList.remove("open");busy();scrollTo(0,0)}
-function skel(){const bar='<div class="sk sk-h"></div>';return /^(discover|saved|cal)$/.test(route)?bar+'<div class="grid">'+'<div class="sk sk-card"></div>'.repeat(6)+"</div>":bar+'<div class="card" style="padding:12px">'+'<div class="sk sk-row"></div>'.repeat(6)+"</div>"}
+function go(r){route=r;P.n=false;if(r==="form")PI=(evOf(ed)||{}).img||"";$("#side").classList.remove("open");render();scrollTo(0,0)}
 function render(){
   if(!U)return;persist();
   const nav=NAVS[U.role],pc=U.role==="admin"?pendingCount():0,cur=nav.find(n=>n[0]===route)||nav[0];
@@ -189,7 +187,7 @@ function render(){
   const my=S.notes.filter(n=>n.to===U.email),un=my.filter(n=>!n.read).length;$("#bell").innerHTML=ic("bell",19)+(un?`<b class="dot">${un}</b>`:"");
   $("#who").innerHTML=`<span class="av">${E(ini(U.name))}</span><span class="who-t"><b>${E(U.name)}</b><small>${ROLES[U.role]}</small></span>`;
   $("#b-theme").innerHTML=ic("moon")+"<span>Dark / light</span>";$("#b-text").innerHTML=ic("type")+"<span>Text size: "+TX[TI][1]+"</span>";$("#b-api").innerHTML=ic("code")+"<span>API console</span>";$("#b-out").innerHTML=ic("out")+"<span>Sign out</span>";
-  $("#main").innerHTML=LD?skel():({discover:vDisc,saved:vSaved,cal:vCal,regs:vRegs,mine:vMine,form:vForm,scan:vScan,approve:vAppr,all:vAll,users:vUsers,rep:vRep,audit:vAudit,me:vMe})[route]();
+  $("#main").innerHTML=({discover:vDisc,saved:vSaved,cal:vCal,regs:vRegs,mine:vMine,form:vForm,scan:vScan,approve:vAppr,all:vAll,users:vUsers,rep:vRep,audit:vAudit,me:vMe})[route]();
   $("#pn").innerHTML=P.n?`<div class="card pn"><div class="row2"><b>Notifications</b><span class="sp"></span>${un?`<button class="btn g s" onclick="readAll()">Mark all read</button>`:""}</div>${my.length?my.slice(0,25).map(n=>`<div class="nt ${n.read?"":"un"}">${E(n.msg)}<span>${n.t}</span></div>`).join(""):'<p class="mu" style="margin:14px 0 4px">Nothing new.</p>'}</div>`:"";
   $("#api").innerHTML=P.a?`<div class="card api"><div class="row2"><b style="font-size:13px">REST API log</b><span class="mu mini">Express + JWT</span><span class="sp"></span><button class="x" onclick="P.a=false;render()" aria-label="Close">×</button></div>${log.length?log.map(l=>`<div class="ln"><span class="m ${l.m}">${l.m}</span><span class="sp">${E(l.u)}</span><span class="mu">${l.c}</span></div>`).join(""):'<p class="mu" style="font-size:13px">Perform an action to see calls.</p>'}<div class="row2" style="margin-top:10px"><button class="btn g s" onclick="schema()">DB schema</button><button class="btn g s" onclick="token()">JWT</button></div></div>`:""}
 function readAll(){S.notes.forEach(n=>{if(n.to===U.email)n.read=true});render()}
@@ -216,7 +214,7 @@ function vDisc(){const l=list(),o=(a,k)=>`<option value="All">All departments</o
   <label class="fld"><span>Past events</span><select onchange="sf('past',this.value==='1')"><option value="0">Hide</option><option value="1" ${F.past?"selected":""}>Show</option></select></label></div>
   <div id="lstw">${lstHTML()}</div>`}
 function vSaved(){const l=S.events.filter(e=>saved().includes(e.id)&&e.st==="approved");return `<div class="ph"><div><h2>Saved events</h2><p class="mu">Your shortlist.</p></div></div>`+(l.length?`<div class="grid">${cards(l)}</div>`:empty("heart","Nothing saved yet","Tap the heart on any event to keep it here."))}
-function sv(id){const s=saved();S.saved[U.email]=s.includes(id)?s.filter(x=>x!==id):[...s,id];toast(s.includes(id)?"Removed from saved":"Saved");render();if($("#mr").innerHTML)open_(id)}
+function sv(id){const s=saved();S.saved[U.email]=s.includes(id)?s.filter(x=>x!==id):[...s,id];render();if($("#mr").innerHTML)open_(id)}
 function open_(id){const e=evOf(id);if(!e)return;const d=reg(id),w=wl(id),over=days(e.date)<0,pos=S.waits.filter(x=>x.ev===id).findIndex(x=>x.email===U.email)+1,my=mine().find(r=>r.ev===id),r=avg(id),fbs=S.fb.filter(f=>f.ev===id);
   const a=U.role!=="student"?"":over?'<button class="btn" disabled>Event ended</button>':d?`<button class="btn g" onclick="ask('Cancel your registration for ${E(e.title.replace(/['"]/g,""))}?',()=>cancel('${id}'))">Cancel registration</button>`:w?`<button class="btn g" onclick="leaveWait('${id}')">Leave waitlist</button>`:left(e)?`<button class="btn" onclick="rsvp('${id}')">Register in one click</button>`:`<button class="btn" onclick="joinWait('${id}')">Join waitlist</button>`;
   modal(`${e.img?`<div class="mp" style="${banner(e)}"></div>`:""}<div class="mh"><div><span class="pill pr">${e.cat}</span><h2 style="font-size:20px;margin-top:8px">${E(e.title)}</h2><p class="mu" style="margin:4px 0 0;font-size:13.5px">${E(e.dept)} · ${E(e.club)}</p></div><button class="x" onclick="closeM()" aria-label="Close">×</button></div>
@@ -230,11 +228,11 @@ function rsvp(id){const e=evOf(id);if(U.role!=="student"||left(e)<1||reg(id)||da
   doReg(id)}
 function doReg(id){const e=evOf(id);if(left(e)<1||reg(id))return;e.booked++;
   S.regs.push({id:"REG"+S.rc++,ev:id,email:U.email,name:U.name,roll:U.roll,dept:U.dept,on:TODAY,in:false,inTs:0,inAt:""});S.waits=S.waits.filter(w=>!(w.ev===id&&w.email===U.email));
-  api("POST",`/api/events/${id}/register`,201);note(U.email,"Registration confirmed: "+e.title);audit("Registered for "+e.title);closeM();render();toast("Registered. Seat confirmed.")}
+  api("POST",`/api/events/${id}/register`,201);note(U.email,"Registration confirmed: "+e.title);audit("Registered for "+e.title);closeM();render()}
 function cancel(id){const e=evOf(id),i=S.regs.findIndex(r=>r.ev===id&&r.email===U.email);if(i<0)return;S.regs.splice(i,1);e.booked=Math.max(0,e.booked-1);
-  api("DELETE",`/api/events/${id}/register`);note(U.email,"Registration cancelled: "+e.title);audit("Cancelled "+e.title);fillWait(e);closeM();render();toast("Cancelled. Seat released.")}
-function joinWait(id){S.waits.push({ev:id,email:U.email,name:U.name,roll:U.roll,dept:U.dept,on:TODAY});api("POST",`/api/events/${id}/waitlist`,201);note(U.email,"You joined the waitlist: "+evOf(id).title);closeM();render();toast("On the waitlist")}
-function leaveWait(id){S.waits=S.waits.filter(w=>!(w.ev===id&&w.email===U.email));api("DELETE",`/api/events/${id}/waitlist`);closeM();render();toast("Left the waitlist")}
+  api("DELETE",`/api/events/${id}/register`);note(U.email,"Registration cancelled: "+e.title);audit("Cancelled "+e.title);fillWait(e);closeM();render()}
+function joinWait(id){S.waits.push({ev:id,email:U.email,name:U.name,roll:U.roll,dept:U.dept,on:TODAY});api("POST",`/api/events/${id}/waitlist`,201);note(U.email,"You joined the waitlist: "+evOf(id).title);closeM();render()}
+function leaveWait(id){S.waits=S.waits.filter(w=>!(w.ev===id&&w.email===U.email));api("DELETE",`/api/events/${id}/waitlist`);closeM();render()}
 function vRegs(){const r=mine().sort((a,b)=>evOf(b.ev).date.localeCompare(evOf(a.ev).date)),up=r.filter(x=>days(evOf(x.ev).date)>=0),past=r.filter(x=>days(evOf(x.ev).date)<0);
   const row=x=>{const e=evOf(x.ev),over=days(e.date)<0,fb=S.fb.some(f=>f.ev===e.id&&f.email===U.email);return `<tr><td><b>${E(e.title)}</b><div class="mt">${E(e.venue)} · ${when(e.date)}</div></td><td>${fd(e.date)}<div class="mt">${ft(e.time)}</div></td><td><span class="mono">${x.id}</span></td><td>${x.in?'<span class="pill ok">Attended</span>':over?'<span class="pill">Ended</span>':'<span class="pill pr">Confirmed</span>'}</td>
     <td class="rb">${over?"":`<button class="btn s" onclick="ticket('${x.id}')">Ticket</button>`}${over?`<button class="btn g s" onclick="rate('${e.id}')">${ic("star",14)} ${fb?"Edit rating":"Rate"}</button>`:""}${x.in?`<button class="btn s" onclick="cert('${x.id}')">${ic("award",14)} Certificate</button>`:""}${over?"":`<button class="btn g s" onclick="ask('Cancel your registration for this event?',()=>cancel('${e.id}'))">Cancel</button>`}</td></tr>`};
@@ -261,7 +259,7 @@ function rate(id){const e=evOf(id),f=S.fb.find(x=>x.ev===id&&x.email===U.email);
   <div class="mf"><button class="btn g" onclick="closeM()">Cancel</button><button class="btn" onclick="saveFb('${id}')">Submit</button></div>`)}
 function saveFb(id){if(!RS)return toast("Pick a star rating first",1);const e=evOf(id),t=$("#fbt").value.trim(),f=S.fb.find(x=>x.ev===id&&x.email===U.email);
   if(f){f.stars=RS;f.text=t;f.t=TODAY}else{S.fb.push({ev:id,email:U.email,name:U.name,stars:RS,text:t,t:TODAY});note(e.owner,`New ${RS}-star rating for ${e.title}`)}
-  api("POST",`/api/events/${id}/feedback`,201);audit("Rated "+e.title+" "+RS+"/5");closeM();render();toast("Thanks for your feedback")}
+  api("POST",`/api/events/${id}/feedback`,201);audit("Rated "+e.title+" "+RS+"/5");closeM();render()}
 function cert(rid){const r=S.regs.find(x=>x.id===rid),e=r&&evOf(r.ev);if(!r||!r.in)return toast("Certificate is available after check-in",1);
   modal(`<div class="mh no-print"><h2 style="font-size:19px">Certificate</h2><button class="x" onclick="closeM()" aria-label="Close">×</button></div><div class="mb"><div class="cert"><div class="cert-in"><div class="cert-brand">EventSphere · SRM Easwari Engineering College</div><h2>Certificate of Participation</h2><p>This is to certify that</p><div class="cert-name">${E(r.name)}</div><p>Roll no. ${E(r.roll)} (${E(r.dept)}) has participated in</p><div class="cert-ev">${E(e.title)}</div>
   <p>${E(e.cat)} held on ${fd(e.date)} at ${E(e.venue)}, organised by ${E(e.club)}.</p><div class="cert-foot"><div><span></span>Event organizer</div><div class="cert-id">${ic("award",26)}<small>CERT-${r.id}</small></div><div><span></span>Head of department</div></div></div></div></div>
@@ -308,12 +306,12 @@ function save(){const t=$("#f-t").value.trim(),dt=$("#f-a").value,old=evOf(ed),c
   if(!t)return toast("Add a title first",1);if(!dt)return toast("Pick a date",1);if(!ed&&dt<TODAY)return toast("Date cannot be in the past",1);
   if(!(cap>=1))return toast("Capacity must be at least 1",1);if(old&&cap<old.booked)return toast("Capacity cannot be below "+old.booked+" booked seats",1);
   const d={title:t,club:$("#f-c").value.trim()||"Department",cat:$("#f-k").value,dept:$("#f-d").value,date:dt,time:$("#f-m").value,venue:$("#f-v").value.trim()||"TBA",cap,fee:$("#f-f").value.trim()||"Free",about:$("#f-b").value.trim()||"Details soon.",img:PI};
-  if(old){Object.assign(old,d);fillWait(old);api("PUT",`/api/events/${ed}`);audit("Edited "+t);S.regs.filter(r=>r.ev===ed).forEach(r=>note(r.email,"Event updated: "+t+" ("+fd(dt)+", "+d.venue+")"));toast("Event updated")}
+  if(old){Object.assign(old,d);fillWait(old);api("PUT",`/api/events/${ed}`);audit("Edited "+t);S.regs.filter(r=>r.ev===ed).forEach(r=>note(r.email,"Event updated: "+t+" ("+fd(dt)+", "+d.venue+")"))}
   else{const id="EV"+String(Date.now()).slice(-6);S.events.push({...d,id,booked:0,st:"pending",h:Math.floor(Math.random()*360),owner:U.email});api("POST","/api/events",201);audit("Created "+t);noteRole("admin","New event awaiting approval: "+t);toast("Submitted. Waiting for admin.")}
   ed=null;PI="";go("mine")}
-function dup(id){const e=evOf(id),c={...e,id:"EV"+String(Date.now()).slice(-6),title:e.title+" (copy)",booked:0,st:"pending",date:addDays(Math.max(7,days(e.date)+7))};S.events.push(c);api("POST","/api/events",201);audit("Duplicated "+e.title);noteRole("admin","New event awaiting approval: "+c.title);render();toast("Copy created. Pending approval.")}
+function dup(id){const e=evOf(id),c={...e,id:"EV"+String(Date.now()).slice(-6),title:e.title+" (copy)",booked:0,st:"pending",date:addDays(Math.max(7,days(e.date)+7))};S.events.push(c);api("POST","/api/events",201);audit("Duplicated "+e.title);noteRole("admin","New event awaiting approval: "+c.title);render()}
 function del(id){const e=evOf(id);if(!e)return;S.regs.filter(r=>r.ev===id).forEach(r=>note(r.email,"Event cancelled: "+e.title));S.waits.filter(w=>w.ev===id).forEach(w=>note(w.email,"Event cancelled: "+e.title));
-  S.events=S.events.filter(x=>x.id!==id);S.regs=S.regs.filter(r=>r.ev!==id);S.waits=S.waits.filter(w=>w.ev!==id);S.fb=S.fb.filter(f=>f.ev!==id);S.reqs=S.reqs.filter(r=>r.ev!==id);api("DELETE",`/api/events/${id}`);audit("Deleted "+e.title);closeM();render();toast("Event deleted")}
+  S.events=S.events.filter(x=>x.id!==id);S.regs=S.regs.filter(r=>r.ev!==id);S.waits=S.waits.filter(w=>w.ev!==id);S.fb=S.fb.filter(f=>f.ev!==id);S.reqs=S.reqs.filter(r=>r.ev!==id);api("DELETE",`/api/events/${id}`);audit("Deleted "+e.title);closeM();render()}
 function att(id){const e=evOf(id),r=S.regs.filter(x=>x.ev===id),ci=r.filter(x=>x.in).length;
   modal(`<div class="mh"><div><h2 style="font-size:19px">Attendees</h2><p class="mu" style="margin:4px 0 0;font-size:13.5px">${E(e.title)} · ${r.length} registered · ${ci} checked in</p></div><button class="x" onclick="closeM()" aria-label="Close">×</button></div>
   <div class="mb" style="padding:0">${r.length?`<div class="tw"><table style="min-width:0"><tr><th>Name</th><th>Roll no.</th><th>Ticket</th><th>In</th></tr>${r.map(x=>`<tr><td>${E(x.name)}<div class="mt">${E(x.dept)}</div></td><td>${E(x.roll)}</td><td class="mono">${x.id}</td><td><input class="chk" type="checkbox" ${x.in?"checked":""} onchange="checkin('${x.id}','${id}')" aria-label="Check in ${E(x.name)}"></td></tr>`).join("")}</table></div>`:'<p class="mu" style="padding:20px">No registrations yet.</p>'}</div>
@@ -351,7 +349,7 @@ function reqSeats(id){const e=evOf(id);modal(`<div class="mh"><div><h2 style="fo
   <div class="mb"><label class="fld"><span>New capacity</span><input id="rq" type="number" min="${e.booked}" value="${e.cap+20}"></label><label class="fld"><span>Reason</span><textarea id="rr2" rows="3" placeholder="Why do you need more seats?"></textarea></label></div><div class="mf"><button class="btn g" onclick="closeM()">Cancel</button><button class="btn" onclick="sendReq('${id}')">Send to admin</button></div>`)}
 function sendReq(id){const e=evOf(id),v=Math.floor(+$("#rq").value);if(!(v>=1))return toast("Enter a valid capacity",1);if(v<e.booked)return toast("Cannot go below "+e.booked+" booked seats",1);if(v===e.cap)return toast("That is the current capacity",1);
   if(S.reqs.some(r=>r.ev===id&&r.st==="pending"))return toast("A request for this event is already pending",1);
-  S.reqs.push({id:"RQ"+Date.now(),ev:id,from:e.cap,to:v,reason:$("#rr2").value.trim(),by:U.email,st:"pending",t:stamp()});noteRole("admin","Seat request: "+e.title+" "+e.cap+" to "+v);api("POST",`/api/events/${id}/capacity-requests`,201);audit("Requested seats for "+e.title+": "+e.cap+" to "+v);closeM();render();toast("Request sent to admin")}
+  S.reqs.push({id:"RQ"+Date.now(),ev:id,from:e.cap,to:v,reason:$("#rr2").value.trim(),by:U.email,st:"pending",t:stamp()});noteRole("admin","Seat request: "+e.title+" "+e.cap+" to "+v);api("POST",`/api/events/${id}/capacity-requests`,201);audit("Requested seats for "+e.title+": "+e.cap+" to "+v);closeM();render()}
 
 /* ================= 7. admin + profile ================= */
 function vAppr(){const p=S.events.filter(e=>e.st==="pending"),q=S.reqs.filter(r=>r.st==="pending");
@@ -359,7 +357,7 @@ function vAppr(){const p=S.events.filter(e=>e.st==="pending"),q=S.reqs.filter(r=
   +`<h3 class="sec">Seat requests</h3>`+(q.length?`<div class="card tw"><table><tr><th>Event</th><th>Change</th><th>Reason</th><th></th></tr>${q.map(r=>{const e=evOf(r.ev);return `<tr><td><b>${E(e?e.title:"Deleted event")}</b><div class="mt">${e?e.booked+" booked":""} · by ${E(r.by)}</div></td><td>${r.from} to <b>${r.to}</b></td><td class="mt">${E(r.reason||"–")}</td><td class="rb"><button class="btn s" onclick="reqDec('${r.id}',1)">Approve</button><button class="btn g s" onclick="reqDec('${r.id}',0)">Reject</button></td></tr>`}).join("")}</table></div>`:empty("swap","No seat requests","Organizers can ask for more seats on live events."))}
 function reqDec(id,ok){const r=S.reqs.find(x=>x.id===id),e=r&&evOf(r.ev);if(!r)return;if(!e){r.st="rejected";return render()}
   if(ok){e.cap=r.to;r.st="approved";fillWait(e);note(r.by,`Seat request approved: ${e.title} now ${r.to} seats`);api("PUT",`/api/admin/capacity-requests/${id}/approve`)}else{r.st="rejected";note(r.by,`Seat request rejected: ${e.title}`);api("PUT",`/api/admin/capacity-requests/${id}/reject`)}
-  audit((ok?"Approved":"Rejected")+" seat request for "+e.title);render();toast(ok?"Capacity updated":"Request rejected")}
+  audit((ok?"Approved":"Rejected")+" seat request for "+e.title);render()}
 function rejectAsk(id){const e=evOf(id);modal(`<div class="mh"><div><h2 style="font-size:19px">Reject event</h2><p class="mu" style="margin:4px 0 0;font-size:13.5px">${E(e.title)}</p></div><button class="x" onclick="closeM()" aria-label="Close">×</button></div><div class="mb"><label class="fld"><span>Reason (sent to the organizer)</span><textarea id="rr" rows="3"></textarea></label></div><div class="mf"><button class="btn g" onclick="closeM()">Cancel</button><button class="btn d" onclick="dec('${id}',0,$('#rr').value)">Reject event</button></div>`)}
 function dec(id,ok,why){const e=evOf(id);if(ok){e.st="approved";api("PUT",`/api/admin/events/${id}/approve`);note(e.owner,"Approved and live: "+e.title);audit("Approved "+e.title)}
   else{S.events=S.events.filter(x=>x.id!==id);api("PUT",`/api/admin/events/${id}/reject`);note(e.owner,"Rejected: "+e.title+(why&&why.trim()?". Reason: "+why.trim():""));audit("Rejected "+e.title)}closeM();render();toast(ok?"Approved. Now live.":"Rejected. Organizer notified.")}
@@ -368,7 +366,7 @@ function allCsv(){api("GET","/api/admin/events?format=csv");download("eventspher
 function vUsers(){const c=r=>S.users.filter(u=>u.role===r).length;
   return `<div class="ph"><div><h2>Users</h2><p class="mu">Disable an account to block sign-in.</p></div></div><div class="stats">${stat("users","Students",c("student"))}${stat("layers","Organizers",c("organizer"))}${stat("approve","Admins",c("admin"))}</div>
   <div class="card tw"><table><tr><th>Name</th><th>Email</th><th>Role</th><th>Dept / Roll</th><th>Status</th><th></th></tr>${S.users.map((u,i)=>`<tr><td><div class="ecell"><span class="av sm">${E(ini(u.name))}</span><b>${E(u.name)}</b></div></td><td>${E(u.email)}</td><td><span class="pill pr">${ROLES[u.role]}</span></td><td>${E(u.dept)}${u.roll?`<div class="mt">${E(u.roll)}</div>`:""}</td><td>${u.active?'<span class="pill ok">Active</span>':'<span class="pill dn">Disabled</span>'}</td><td>${u.email===U.email?'<span class="mu mini">You</span>':`<button class="btn g s" onclick="toggleUser(${i})">${u.active?"Disable":"Enable"}</button>`}</td></tr>`).join("")}</table></div>`}
-function toggleUser(i){const u=S.users[i];u.active=!u.active;api("PUT","/api/admin/users/"+i,200);audit((u.active?"Enabled ":"Disabled ")+u.email);render();toast(u.active?"Account enabled":"Account disabled")}
+function toggleUser(i){const u=S.users[i];u.active=!u.active;api("PUT","/api/admin/users/"+i,200);audit((u.active?"Enabled ":"Disabled ")+u.email);render()}
 function grp(ap,k){const o={};ap.forEach(e=>{const g=o[e[k]]=o[e[k]]||{b:0,c:0};g.b+=e.booked;g.c+=e.cap});return o}
 function bars(o){const r=Object.entries(o);return r.length?r.map(([n,g])=>`<div style="margin-bottom:14px"><div class="sl"><span>${E(n)}</span><span class="mu">${g.b}/${g.c}</span></div><div class="bar"><i style="width:${g.c?Math.round(g.b/g.c*100):0}%"></i></div></div>`).join(""):'<p class="mu">No data.</p>'}
 function lineChart(pts){const W=560,H=190,pl=30,pb=24,pt=12,mx=Math.max(3,...pts.map(p=>p.v)),x=i=>pl+i*(W-pl-8)/(pts.length-1),y=v=>pt+(H-pt-pb)*(1-v/mx),
