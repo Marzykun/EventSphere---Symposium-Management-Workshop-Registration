@@ -1397,7 +1397,7 @@ function vCal() {
       .slice(0, 2)
       .map(
         (e) =>
-          `<button class="cchip${e.st === "pending" ? " pend" : ""}" style="--h:${e.h}" onclick="open_('${e.id}')" title="${E(e.title)}">${ft(e.time).replace(":00", "")} ${E(e.title)}</button>`,
+          `<button class="cchip${e.st === "pending" ? " pend" : ""}" onclick="open_('${e.id}')" title="${E(e.title)}">${ft(e.time).replace(":00", "")} ${E(e.title)}</button>`,
       )
       .join(
         "",

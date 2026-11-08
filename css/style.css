@@ -1,69 +1,77 @@
-/* EventSphere v3 design system. Edit the tokens in :root to re-theme. */
+/* Hallmark · palette redesign · tone: utilitarian · anchor hue: blue (oklch ~255) · deep-blue sidebar, white surfaces
+ * roles: student mid blue · organizer deep blue · admin teal-blue · status colours (ok/wn/dn) and stars stay semantic
+ * pre-emit critique: P4 H4 E4 S4 R5 V3
+ * EventSphere design system. Edit the tokens in :root to re-theme. */
 :root {
-  --bg: oklch(97.1% 0.007 277);
-  --sf: oklch(99.2% 0.004 280);
-  --s2: oklch(95.8% 0.008 271);
-  --tx: oklch(20.1% 0.046 274);
-  --mu: oklch(50.9% 0.048 274);
-  --bd: oklch(92.3% 0.014 273);
-  --pr: oklch(45.7% 0.215 277);
-  --ps: oklch(94.6% 0.023 289);
-  --pf: oklch(99.2% 0.004 280);
+  --bg: oklch(97.6% 0.008 250);
+  --sf: oklch(99.5% 0.003 250);
+  --s2: oklch(95.9% 0.012 250);
+  --tx: oklch(22% 0.045 258);
+  --mu: oklch(49% 0.04 255);
+  --bd: oklch(91.5% 0.016 250);
+  --pr: oklch(52% 0.18 255);
+  --ps: oklch(94.8% 0.03 250);
+  --pf: oklch(99.5% 0.003 250);
   --ok: oklch(51.3% 0.11 162);
   --oks: oklch(95.3% 0.024 167);
   --wn: oklch(53.2% 0.114 71);
   --wns: oklch(96% 0.041 89);
   --dn: oklch(50% 0.182 30);
   --dns: oklch(94.7% 0.023 24);
-  --sh: 0 1px 2px oklch(20.1% 0.046 274 / 0.05),
-    0 4px 16px oklch(20.1% 0.046 274 / 0.05);
-  --sh2: 0 12px 40px oklch(20.1% 0.046 274 / 0.18);
+  --sh: 0 1px 2px oklch(22% 0.045 258 / 0.05),
+    0 4px 16px oklch(22% 0.045 258 / 0.05);
+  --sh2: 0 12px 40px oklch(22% 0.045 258 / 0.18);
   --r: 14px;
-  --side: oklch(20.2% 0.057 274);
-  --sidetx: oklch(80.9% 0.041 276);
-  --c1: oklch(45.7% 0.215 277);
-  --c2: oklch(59.6% 0.104 182);
-  --c3: oklch(69.4% 0.155 61);
-  --c4: oklch(56.4% 0.223 337);
-  --c5: oklch(65.2% 0.181 254);
-  --ink-inv: oklch(99.2% 0.004 280);
-  --side-hover: oklch(100% 0 0 / 0.07);
-  --side-rule: oklch(100% 0 0 / 0.09);
-  --navc: oklch(51.1% 0.23 277);
+  --side: oklch(33% 0.12 258);
+  --sidetx: oklch(87% 0.04 250);
+  /* chart series: one blue family, separated by lightness so the donut stays readable */
+  --c1: oklch(52% 0.18 255);
+  --c2: oklch(70% 0.11 235);
+  --c3: oklch(36% 0.12 265);
+  --c4: oklch(82% 0.06 240);
+  --c5: oklch(58% 0.1 220);
+  --ink-inv: oklch(99.5% 0.003 250);
+  --side-hover: oklch(100% 0 0 / 0.09);
+  --side-rule: oklch(100% 0 0 / 0.14);
+  --navc: oklch(52% 0.18 255);
   --star: oklch(77.2% 0.161 75);
-  --star-off: oklch(86% 0.028 275);
+  --star-off: oklch(86% 0.025 250);
   --heart: oklch(58.6% 0.222 18);
   --on-img: oklch(100% 0 0 / 0.92);
-  --on-img-tx: oklch(28.9% 0.016 285);
-  --scrim: oklch(15.2% 0.032 276 / 0.58);
-  --img-scrim: oklch(15.2% 0.032 276 / 0.35);
-  --toast: oklch(22.7% 0.049 273);
+  --on-img-tx: oklch(26% 0.05 258);
+  --scrim: oklch(16% 0.04 258 / 0.58);
+  --img-scrim: oklch(16% 0.04 258 / 0.35);
+  --toast: oklch(30% 0.1 258);
   --tk-pill: oklch(100% 0 0 / 0.2);
-  --white: oklch(100% 0 0);
-  --cert-paper: oklch(99.4% 0.009 94);
-  --cert-ink: oklch(26.1% 0.034 93);
-  --cert-body: oklch(38% 0.047 93);
-  --cert-accent: oklch(49.3% 0.097 85);
-  --cert-gold: oklch(68.6% 0.124 90);
-  --cert-rule: oklch(77.6% 0.099 96);
-  --cat1: oklch(46% 0.13 277);
-  --cat2: oklch(46% 0.104 182);
-  --cat3: oklch(46% 0.13 61);
-  --cat4: oklch(46% 0.13 337);
-  --cat5: oklch(46% 0.13 254);
-  --cert-mu: oklch(48.7% 0.062 94);
+  --white: oklch(
+    100% 0 0
+  ); /* pure white only where functional: QR ground + printed paper */
+  /* poster-less event banners: blues deep enough for white text */
+  --cat1: oklch(46% 0.17 258);
+  --cat2: oklch(43% 0.1 225);
+  --cat3: oklch(34% 0.12 265);
+  --cat4: oklch(50% 0.13 242);
+  --cat5: oklch(40% 0.14 250);
+  /* certificate: navy ink on white */
+  --cert-paper: oklch(99.5% 0.003 250);
+  --cert-ink: oklch(24% 0.05 258);
+  --cert-body: oklch(38% 0.04 255);
+  --cert-accent: oklch(42% 0.15 258);
+  --cert-seal: oklch(52% 0.18 255);
+  --cert-rule: oklch(80% 0.05 250);
+  --cert-mu: oklch(48% 0.035 255);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: oklch(17.5% 0.034 274);
-    --sf: oklch(22.5% 0.051 275);
-    --s2: oklch(26% 0.058 275);
-    --tx: oklch(95.1% 0.018 279);
-    --mu: oklch(74% 0.047 275);
-    --bd: oklch(31.4% 0.061 276);
-    --pr: oklch(69.4% 0.165 282);
-    --ps: oklch(30.4% 0.088 277);
-    --pf: oklch(17.5% 0.034 274);
+    --bg: oklch(17% 0.03 255);
+    --sf: oklch(22% 0.04 255);
+    --s2: oklch(26% 0.045 255);
+    --tx: oklch(95% 0.012 250);
+    --mu: oklch(74% 0.035 250);
+    --bd: oklch(31% 0.05 255);
+    --pr: oklch(72% 0.14 250);
+    --ps: oklch(30% 0.07 255);
+    --pf: oklch(17% 0.03 255);
     --ok: oklch(78.8% 0.142 163);
     --oks: oklch(29.9% 0.045 170);
     --wn: oklch(83.7% 0.131 86);
@@ -71,19 +79,19 @@
     --dn: oklch(76% 0.143 24);
     --dns: oklch(26.9% 0.055 23);
     --sh: 0 4px 20px oklch(0% 0 0 / 0.35);
-    --side: oklch(15.7% 0.032 276);
+    --side: oklch(24% 0.08 258);
   }
 }
 :root[data-theme="dark"] {
-  --bg: oklch(17.5% 0.034 274);
-  --sf: oklch(22.5% 0.051 275);
-  --s2: oklch(26% 0.058 275);
-  --tx: oklch(95.1% 0.018 279);
-  --mu: oklch(74% 0.047 275);
-  --bd: oklch(31.4% 0.061 276);
-  --pr: oklch(69.4% 0.165 282);
-  --ps: oklch(30.4% 0.088 277);
-  --pf: oklch(17.5% 0.034 274);
+  --bg: oklch(17% 0.03 255);
+  --sf: oklch(22% 0.04 255);
+  --s2: oklch(26% 0.045 255);
+  --tx: oklch(95% 0.012 250);
+  --mu: oklch(74% 0.035 250);
+  --bd: oklch(31% 0.05 255);
+  --pr: oklch(72% 0.14 250);
+  --ps: oklch(30% 0.07 255);
+  --pf: oklch(17% 0.03 255);
   --ok: oklch(78.8% 0.142 163);
   --oks: oklch(29.9% 0.045 170);
   --wn: oklch(83.7% 0.131 86);
@@ -91,35 +99,32 @@
   --dn: oklch(76% 0.143 24);
   --dns: oklch(26.9% 0.055 23);
   --sh: 0 4px 20px oklch(0% 0 0 / 0.35);
-  --side: oklch(15.7% 0.032 276);
+  --side: oklch(24% 0.08 258);
 }
+/* role accents: three shades of blue */
 body[data-role="organizer"] {
-  --pr: oklch(55.5% 0.096 185);
-  --ps: color-mix(in srgb, var(--pr) 14%, var(--sf));
+  --pr: oklch(42% 0.15 263);
+  --ps: color-mix(in srgb, var(--pr) 12%, var(--sf));
+  --navc: oklch(46% 0.15 263);
 }
 body[data-role="admin"] {
-  --pr: oklch(57.7% 0.162 44);
-  --ps: color-mix(in srgb, var(--pr) 14%, var(--sf));
-}
-body[data-role="organizer"] {
-  --navc: oklch(51.1% 0.086 186);
-}
-body[data-role="admin"] {
-  --navc: oklch(55.3% 0.174 38);
+  --pr: oklch(50% 0.1 222);
+  --ps: color-mix(in srgb, var(--pr) 12%, var(--sf));
+  --navc: oklch(50% 0.1 222);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) body[data-role="organizer"] {
-    --pr: oklch(78.5% 0.133 182);
+    --pr: oklch(72% 0.12 268);
   }
   :root:not([data-theme="light"]) body[data-role="admin"] {
-    --pr: oklch(75.8% 0.159 56);
+    --pr: oklch(76% 0.1 220);
   }
 }
 :root[data-theme="dark"] body[data-role="organizer"] {
-  --pr: oklch(78.5% 0.133 182);
+  --pr: oklch(72% 0.12 268);
 }
 :root[data-theme="dark"] body[data-role="admin"] {
-  --pr: oklch(75.8% 0.159 56);
+  --pr: oklch(76% 0.1 220);
 }
 html[data-text="lg"] body {
   zoom: 1.1;
@@ -1446,7 +1451,7 @@ pre {
   border: 1px solid var(--cert-rule);
 }
 .cert-in {
-  border: 3px double var(--cert-gold);
+  border: 3px double var(--cert-seal);
   padding: 30px 26px;
   text-align: center;
   display: grid;
@@ -1503,7 +1508,7 @@ pre {
 .cert-id {
   display: grid;
   justify-items: center;
-  color: var(--cert-gold);
+  color: var(--cert-seal);
 }
 .cert-id small {
   color: var(--cert-mu);
@@ -1562,8 +1567,8 @@ pre {
   font-weight: 600;
   padding: 3px 6px;
   border-radius: 6px;
-  background: oklch(93% 0.045 var(--h));
-  color: oklch(36% 0.09 var(--h));
+  background: var(--ps);
+  color: var(--pr);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1581,16 +1586,6 @@ pre {
   font-weight: 700;
   text-align: left;
   padding: 0 4px;
-}
-:root[data-theme="dark"] .cchip {
-  background: oklch(32% 0.05 var(--h));
-  color: oklch(91% 0.05 var(--h));
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .cchip {
-    background: oklch(32% 0.05 var(--h));
-    color: oklch(91% 0.05 var(--h));
-  }
 }
 .agenda {
   display: none;
