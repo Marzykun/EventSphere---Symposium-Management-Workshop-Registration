@@ -226,7 +226,7 @@ function open_(id){const e=evOf(id);if(!e)return;const d=reg(id),w=wl(id),over=d
   <div class="mf">${U.role==="student"?`<button class="btn g" onclick="sv('${id}')">${ic("heart",15)} ${saved().includes(id)?"Saved":"Save"}</button>`:""}${d?`<button class="btn g" onclick="ics('${id}')">${ic("calendar",15)} Add to calendar</button>`:""}${d&&over?`<button class="btn g" onclick="rate('${id}')">${ic("star",15)} ${S.fb.some(f=>f.ev===id&&f.email===U.email)?"Edit rating":"Rate event"}</button>`:""}${my&&my.in?`<button class="btn g" onclick="cert('${my.id}')">${ic("award",15)} Certificate</button>`:""}<button class="btn g" onclick="closeM()">Close</button>${a}</div>`)}
 function rsvp(id){const e=evOf(id);if(U.role!=="student"||left(e)<1||reg(id)||days(e.date)<0)return;
   const clash=mine().map(r=>evOf(r.ev)).find(x=>x&&x.date===e.date);
-  if(clash){closeM();return ask(`You already have "${clash.title}" on ${fd(e.date)}. Register for "${e.title}" too?`,()=>doReg(id),"Register anyway")}
+  if(clash){closeM();return ask(`You already have “${clash.title}” on ${fd(e.date)}. Register for “${e.title}” too?`,()=>doReg(id),"Register anyway")}
   doReg(id)}
 function doReg(id){const e=evOf(id);if(left(e)<1||reg(id))return;e.booked++;
   S.regs.push({id:"REG"+S.rc++,ev:id,email:U.email,name:U.name,roll:U.roll,dept:U.dept,on:TODAY,in:false,inTs:0,inAt:""});S.waits=S.waits.filter(w=>!(w.ev===id&&w.email===U.email));
@@ -296,7 +296,7 @@ function vForm(){const e=evOf(ed)||{title:"",club:"",cat:"Workshop",dept:"CSE",d
   <label class="fld"><span>Category</span><select id="f-k">${s(CATS,e.cat)}</select></label><label class="fld"><span>Department</span><select id="f-d">${s(DEPTS,e.dept)}</select></label>
   <label class="fld"><span>Date *</span><input type="date" id="f-a" value="${e.date}" ${ed?"":`min="${TODAY}"`}></label><label class="fld"><span>Time</span><input type="time" id="f-m" value="${e.time||""}"></label>
   <label class="fld"><span>Venue</span><input id="f-v" value="${E(e.venue)}"></label>
-  <label class="fld"><span>Capacity${ed?` (${e.booked} booked)`:""}</span><input type="number" min="${Math.max(1,e.booked||1)}" id="f-p" value="${e.cap}" ${lock?"disabled":""}>${lock?'<small class="mu">Live event. Use "Request more seats" so the admin can approve.</small>':""}</label>
+  <label class="fld"><span>Capacity${ed?` (${e.booked} booked)`:""}</span><input type="number" min="${Math.max(1,e.booked||1)}" id="f-p" value="${e.cap}" ${lock?"disabled":""}>${lock?'<small class="mu">Live event. Use “Request more seats” so the admin can approve.</small>':""}</label>
   <label class="fld"><span>Fee</span><input id="f-f" value="${E(e.fee)}"></label></div>
   <label class="fld"><span>About</span><textarea id="f-b" rows="3">${E(e.about)}</textarea></label>
   <div class="fld"><span>Poster image (optional, preview only)</span><div class="up"><div id="upv">${upHTML()}</div><label class="btn g s fileb">${ic("upload",15)} Choose image<input type="file" id="f-i" accept="image/*" onchange="pickImg(this)" hidden></label></div></div>
