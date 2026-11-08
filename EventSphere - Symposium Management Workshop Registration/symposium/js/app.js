@@ -198,8 +198,8 @@ function bar(e){const p=Math.round(e.booked/e.cap*100);return `<div class="sl"><
 const banner=e=>e.img?`background-image:linear-gradient(180deg,rgba(8,10,25,.05),rgba(8,10,25,.55)),url('${e.img}')`:`background-image:linear-gradient(135deg,hsl(${e.h} 62% 52%),hsl(${(e.h+38)%360} 65% 40%))`;
 function list(){const q=F.q.toLowerCase();let l=S.events.filter(e=>e.st==="approved"&&(F.past||days(e.date)>=0)&&(F.cat==="All"||e.cat===F.cat)&&(F.dept==="All"||e.dept===F.dept)&&(!q||(e.title+e.club+e.about+e.venue).toLowerCase().includes(q)));
   return l.sort((a,b)=>F.sort==="seats"?left(b)-left(a):F.sort==="popular"?b.booked/b.cap-a.booked/a.cap:a.date.localeCompare(b.date))}
-function cards(l){return l.length?l.map(e=>`<article class="card ev" onclick="open_('${e.id}')"><div class="bn" style="${banner(e)}"><span class="tag">${e.cat}</span>${U.role==="student"?`<button class="heart ${saved().includes(e.id)?"on":""}" aria-label="Save event" onclick="event.stopPropagation();sv('${e.id}')">${ic("heart",16)}</button>`:""}</div>
-  <div class="eb"><h3>${E(e.title)}</h3><div class="mt">${ic("calendar",14)} ${fd(e.date)} · ${ft(e.time)}</div><div class="mt">${ic("pin",14)} ${E(e.venue)}</div>
+function cards(l){return l.length?l.map(e=>`<article class="card ev"><div class="bn" style="${banner(e)}"><span class="tag">${e.cat}</span>${U.role==="student"?`<button class="heart ${saved().includes(e.id)?"on":""}" aria-label="Save event" onclick="event.stopPropagation();sv('${e.id}')">${ic("heart",16)}</button>`:""}</div>
+  <div class="eb"><h3><button class="evl" onclick="open_('${e.id}')">${E(e.title)}</button></h3><div class="mt">${ic("calendar",14)} ${fd(e.date)} · ${ft(e.time)}</div><div class="mt">${ic("pin",14)} ${E(e.venue)}</div>
   <div class="row2"><span class="cdn">${when(e.date)}</span>${rt(e)}</div><div style="margin-top:auto">${bar(e)}</div>
   <div class="evf">${pill(e)}${reg(e.id)?'<span class="pill pr">✓ Registered</span>':wl(e.id)?'<span class="pill pr">On waitlist</span>':`<span class="mu mini">${E(e.fee)}</span>`}</div></div></article>`).join(""):empty("compass","No events match","Try a different category or clear the search.")}
 function pager(n){const pc=Math.max(1,Math.ceil(n/PAGE));return pc>1?`<div class="pager"><button class="btn g s" ${F.page<=0?"disabled":""} onclick="sf('page',${F.page-1})">${ic("left",15)} Prev</button><span>Page ${F.page+1} of ${pc}</span><button class="btn g s" ${F.page>=pc-1?"disabled":""} onclick="sf('page',${F.page+1})">Next ${ic("right",15)}</button></div>`:""}
@@ -413,8 +413,10 @@ resetCodes     _id, user, codeHash, expiresAt  (TTL index)
 notifications  _id, user -> users._id, message, read, createdAt
 auditlogs      _id, actor, action, createdAt</pre></div><div class="mf"><button class="btn g" onclick="closeM()">Close</button></div>`)}
 function token(){modal(`<div class="mh"><h2 style="font-size:19px">JWT issued at login</h2><button class="x" onclick="closeM()" aria-label="Close">×</button></div><div class="mb"><pre style="white-space:pre-wrap;word-break:break-all">${E(jwt)}</pre><p class="mu" style="font-size:13px">Sent as Authorization: Bearer. Express middleware checks role on protected routes.</p></div><div class="mf"><button class="btn g" onclick="closeM()">Close</button></div>`)}
-function modal(h,wide){$("#mr").innerHTML=`<div class="ov" onclick="if(event.target===this)closeM()"><div class="md${wide?" wide":""}" role="dialog" aria-modal="true">${h}</div></div>`}
-function closeM(){$("#mr").innerHTML=""}
+let MF=null; // element that had focus before the dialog opened
+function modal(h,wide){if(!$("#mr").innerHTML)MF=document.activeElement;$("#mr").innerHTML=`<div class="ov" onclick="if(event.target===this)closeM()"><div class="md${wide?" wide":""}" role="dialog" aria-modal="true" aria-labelledby="mt" tabindex="-1">${h}</div></div>`;
+  const d=$("#mr .md"),t=d.querySelector("h2");if(t)t.id="mt";$("#app").inert=$("#auth").inert=true;(d.querySelector("input,textarea,select")||d).focus()}
+function closeM(){if(!$("#mr").innerHTML)return;$("#mr").innerHTML="";$("#app").inert=$("#auth").inert=false;if(MF&&MF.isConnected)MF.focus();MF=null}
 function ask(msg,fn,label){AK=fn;modal(`<div class="mh"><h2 style="font-size:18px">Are you sure?</h2><button class="x" onclick="closeM()" aria-label="Close">×</button></div><div class="mb"><p style="margin:0">${E(msg)}</p></div><div class="mf"><button class="btn g" onclick="closeM()">No, go back</button><button class="btn" onclick="const f=AK;AK=null;closeM();f()">${E(label||"Yes, continue")}</button></div>`)}
 addEventListener("keydown",e=>{if(e.key==="Escape")closeM()});
 document.addEventListener("click",e=>{document.querySelectorAll("details.more[open]").forEach(d=>{if(!d.contains(e.target))d.open=false})});
